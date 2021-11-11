@@ -9,7 +9,8 @@ function ajax(url, metodo) {
 
 //funcion que retorna los archivos segun id
 function getArchivo(id) {
-    return "plantillas/" + id + ".html"
+    return "plantillas/" + (id || "home") + ".html" //--> shortcircuit operator
+    /* return "plantillas/" + (id? id: "home") + ".html" * --->operador ternario */
 }
 
 
@@ -21,27 +22,27 @@ xhr.addEventListener("load", () => {
     if (xhr.status == 200) {
         header.innerHTML = xhr.response
 
-        getPlantillas()
+        getPlantillasConHash()
     }
 })
 /* ------------------------------------------------ */
 /* Carga de las vistas de navegacion dentro de main */
 /* ------------------------------------------------ */
 
-function getPlantillas() {
+function getPlantillasConHash() {
 
     let main = document.querySelector("main")
     let links = document.querySelectorAll("a")
 
 
     //cargo por default la pagina de home
-    let pagina = getArchivo("home")
+    let id= location.hash.slice(1)
+    let pagina = getArchivo(id)
     xhr = ajax(pagina, "get")
     xhr.addEventListener("load", () => {
         if (xhr.status === 200) {
-            let plantilla = xhr.response
-            main.innerHTML = plantilla
 
+            main.innerHTML = xhr.response
         }
     })
 
@@ -52,7 +53,17 @@ function getPlantillas() {
             let id = link.id
             //obtengo el id de cada link
 
+            //Agrego al elemento location el id para la navegación
+            location.hash = id 
+
             //agrego el id a cada archivo
+           
+            })
+
+        })
+        window.addEventListener("hashchange", ()=>{
+            let id= location.hash.slice(1)
+            
             let archivo = getArchivo(id)
 
             //imprimo en pantalla el contenido de cada archivo
@@ -60,13 +71,9 @@ function getPlantillas() {
             xhr = ajax(archivo, "get")
             xhr.addEventListener("load", () => {
                 if (xhr.status == 200) {
-                    let plantilla = xhr.response
-                    main.innerHTML = plantilla
+                    main.innerHTML = xhr.response
                 }
-            })
-
         })
-
     });
 
 
