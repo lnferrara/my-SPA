@@ -14,6 +14,17 @@ function getArchivo(id) {
 }
 
 
+function marcarLink(id) {
+    let link = document.querySelectorAll("a")
+    link.forEach(link => {
+        link.classList.remove("active")
+        if (link.id == id) {
+            link.classList.add("active")
+        }
+    })
+
+}
+
 let header = document.querySelector("header")
 let archivo = getArchivo("navbar")
 
@@ -36,7 +47,8 @@ function getPlantillasConHash() {
 
 
     //cargo por default la pagina de home
-    let id= location.hash.slice(1)
+    let id = location.hash.slice(1)
+    marcarLink(id)
     let pagina = getArchivo(id)
     xhr = ajax(pagina, "get")
     xhr.addEventListener("load", () => {
@@ -54,25 +66,26 @@ function getPlantillasConHash() {
             //obtengo el id de cada link
 
             //Agrego al elemento location el id para la navegación
-            location.hash = id 
+            location.hash = id
 
             //agrego el id a cada archivo
-           
-            })
 
         })
-        window.addEventListener("hashchange", ()=>{
-            let id= location.hash.slice(1)
-            
-            let archivo = getArchivo(id)
 
-            //imprimo en pantalla el contenido de cada archivo
+    })
+    window.addEventListener("hashchange", () => {
+        let id = location.hash.slice(1)
+        marcarLink(id)
+        let archivo = getArchivo(id)
 
-            xhr = ajax(archivo, "get")
-            xhr.addEventListener("load", () => {
-                if (xhr.status == 200) {
-                    main.innerHTML = xhr.response
-                }
+
+        //imprimo en pantalla el contenido de cada archivo
+
+        xhr = ajax(archivo, "get")
+        xhr.addEventListener("load", () => {
+            if (xhr.status == 200) {
+                main.innerHTML = xhr.response
+            }
         })
     });
 
